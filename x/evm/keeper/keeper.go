@@ -99,6 +99,8 @@ func (k *Keeper) WithChainID(ctx sdk.Context) {
 		panic(err)
 	}
 
+	// k.Logger(ctx).Info("chain info: ", "chainId", chainID, "eip155chainId", k.eip155ChainID)
+
 	if k.eip155ChainID != nil && k.eip155ChainID.Cmp(chainID) != 0 {
 		panic("chain id already set")
 	}

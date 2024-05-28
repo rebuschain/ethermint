@@ -10,12 +10,16 @@ import (
 )
 
 var (
-	regexChainID         = `[a-z]{1,}`
-	regexEIP155Separator = `_{1}`
-	regexEIP155          = `[1-9][0-9]*`
-	regexEpochSeparator  = `-{1}`
-	regexEpoch           = `[1-9][0-9]*`
-	ethermintChainID     = regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)%s(%s)$`, regexChainID, regexEIP155Separator, regexEIP155, regexEpochSeparator, regexEpoch))
+	regexChainID           = `[a-z]{1,}`
+	regexEIP155Separator   = `_{1}`
+	regexEIP155            = `[1-9][0-9]*`
+	regexEpochSeparator    = `-{1}`
+	regexEpoch             = `[1-9][0-9]*`
+	ethermintChainID       = regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)%s(%s)$`, regexChainID, regexEIP155Separator, regexEIP155, regexEpochSeparator, regexEpoch))
+	rebusTestnetDeprecated = big.NewInt(3333)
+	rebusTestnetValid      = big.NewInt(3033)
+	rebusMainnetDepracated = big.NewInt(1111)
+	rebusMainnetValid      = big.NewInt(1011)
 )
 
 // IsValidChainID returns false if the given chain identifier is incorrectly formatted.
@@ -44,6 +48,14 @@ func ParseChainID(chainID string) (*big.Int, error) {
 	chainIDInt, ok := new(big.Int).SetString(matches[2], 10)
 	if !ok {
 		return nil, sdkerrors.Wrapf(ErrInvalidChainID, "epoch %s must be base-10 integer format", matches[2])
+	}
+
+	if chainIDInt.Cmp(rebusTestnetDeprecated) == 0 {
+		chainIDInt = rebusTestnetValid
+	}
+
+	if chainIDInt.Cmp(rebusMainnetDepracated) == 0 {
+		chainIDInt = rebusMainnetValid
 	}
 
 	return chainIDInt, nil
